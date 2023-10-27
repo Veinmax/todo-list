@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <style>
+      .link-to-page {
+          float: right;
+          margin: 0 2px 0 2px;
+      }
+  </style>
+  <h1>
+    TODO list
+    <a href="{% url 'todo_list:task-create' %}" class="btn btn-primary link-to-page d-inline">
+      Create
+    </a>
+  </h1>
+
+  {% if task_list %}
+  {% for task in task_list %}
+    <h4>
+      <strong>
+        {{ task.content }}
+        {% if task.is_done %}
+          <span style="color: green;">Done</span>
+          <a href="{% url 'todo_list:undo-or-complete' pk=task.id %}" class="link-to-page">
+            <span style="color: red;">Undo</span>
+          </a>
+        {% else %}
+          <span style="color: red;">Not done</span>
+          <a href="{% url 'todo_list:undo-or-complete' pk=task.id %}" class="link-to-page">
+            <span style="color: green;">Complete</span>
+          </a>
+        {% endif %}
+      </strong>
+    </h4>
+    <br>
+    Created: {{ task.created_datetime }}
+    {% if task.deadline %}
+      Deadline: {{ task.deadline }}
+    {% endif %}
+    <br>
+    <br>
+    Tags:
+    {% for tag in task.tags.all %}
+      {{ tag }}
+    {% endfor %}
+    <a href="{% url 'todo_list:task-update' pk=task.id %}">
+      Update
+    </a>
+    <a href="{% url 'todo_list:task-delete' pk=task.id %}">
+      Delete
+    </a>
+    <hr>
+  {% endfor %}
+  {% block pagination %}
+    {% include 'includes/pagination.html' %}
+  {% endblock %}
+  {% else %}
+    <p>There are no tasks in the list.</p>
+{% endif %}
+
+{% endblock %}
