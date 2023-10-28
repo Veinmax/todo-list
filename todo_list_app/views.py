@@ -1,6 +1,6 @@
 from django.http import HttpResponseRedirect
 from django.urls import reverse_lazy
-from django.views import generic
+from django.views import generic, View
 from .models import Task, Tag
 
 
@@ -54,13 +54,12 @@ class TagDeleteView(generic.DeleteView):
     success_url = reverse_lazy("todo_list:tag-list")
 
 
-def undo_or_complete_task(request, pk):
-    task = Task.objects.get(pk=pk)
-    if task.is_done:
-        task.is_done = False
-    else:
-        task.is_done = True
-    task.save()
-    return HttpResponseRedirect(
-        reverse_lazy("todo_list:task-list")
-    )
+class UndoOrCompleteTaskView(View):
+    @staticmethod
+    def get(request, pk):
+        task = Task.objects.get(pk=pk)
+        task.is_done = not task.is_done
+        task.save()
+        return HttpResponseRedirect(
+            reverse_lazy("todo_list:task-list")
+        )
