@@ -21,14 +21,22 @@
         {{ task.content }}
         {% if task.is_done %}
           <span style="color: green;">Done</span>
-          <a href="{% url 'todo_list:undo-or-complete' pk=task.id %}" class="link-to-page">
-            <span style="color: red;">Undo</span>
-          </a>
+          <form method="post" action="{% url 'todo_list:undo-or-complete' pk=task.id %}" class="link-to-page">
+            {% csrf_token %}
+            <input type="hidden" name="pk" value="{{ task.id }}">
+            <button type="submit" style="border: none; background: none; cursor: pointer;">
+              <span style="color: red;">Undo</span>
+            </button>
+          </form>
         {% else %}
           <span style="color: red;">Not done</span>
-          <a href="{% url 'todo_list:undo-or-complete' pk=task.id %}" class="link-to-page">
-            <span style="color: green;">Complete</span>
-          </a>
+          <form method="post" action="{% url 'todo_list:undo-or-complete' pk=task.id %}" class="link-to-page">
+            {% csrf_token %}
+            <input type="hidden" name="pk" value="{{ task.id }}">
+            <button type="submit" style="border: none; background: none; cursor: pointer;">
+              <span style="color: green;">Complete</span>
+            </button>
+          </form>
         {% endif %}
       </strong>
     </h4>
